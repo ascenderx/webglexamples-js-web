@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>GLSL 2D Example</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="theme-color" content="#000000"/>
+    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+      integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+      crossorigin="anonymous" defer>
+    </script>
+    <script src="vertex-shader.js" defer></script>
+    <script src="shader-utils.js" defer></script>
+    <script src="fragment-shader.js" defer></script>
+    <script src="loop.js" defer></script>
+    <script src="script.js" defer></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      html, body {
+        height: 100%;
+      }
+      
+      body {
+        margin: 0;
+        background-color: black;
+      }
+      
+      .canvas-container {
+        position: fixed;
+        left: 0px;
+        right: 2px;
+        top: 0px;
+        bottom: 2px;
+      }
+      
+      canvas {
+        border: 1px solid white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas-container">
+      <canvas id="cvs">
+        Your browser does not support the HTML Canvas API.
+      </canvas>
+    </div>
+  </body>
+</html>
