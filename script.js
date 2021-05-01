@@ -199,6 +199,12 @@ window.addEventListener('load', (_) => {
     app.updateMouse(event.clientX, event.clientY);
   });
   
+  canvas.addEventListener('mouseout', (_) => {
+    canvas.classList.remove('grabbing');
+    canvas.classList.add('grab');
+    app.releaseMouse();
+  })
+  
   app.start();
 });
 
