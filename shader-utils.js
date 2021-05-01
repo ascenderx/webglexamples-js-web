@@ -6,6 +6,7 @@ const highp vec2 R = vec2(1.0, 0.0);
 const highp vec2 I = vec2(0.0, 1.0);
 
 uniform lowp vec2 uMouse;
+uniform lowp vec2 uOffset;
 uniform highp float uTime;
 uniform lowp vec2 uResolution;
 

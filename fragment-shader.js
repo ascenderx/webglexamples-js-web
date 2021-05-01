@@ -32,7 +32,7 @@ highp vec2 func(highp vec2 z) {
 #endif
 
 void main(void) {
-  highp vec2 z = uResolution*0.5 - gl_FragCoord.xy;
+  highp vec2 z = uResolution*0.5 - (gl_FragCoord.xy + uOffset.xy);
   highp vec2 o = func(adjustToResolution(z));
   gl_FragColor = vec4(getColor(o), 1.0);
 }

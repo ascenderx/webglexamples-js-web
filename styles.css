@@ -1,3 +1,7 @@
+:root {
+  --border-width: 1px;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -12,15 +16,20 @@ body {
 }
 
 .canvas-container {
-  position: fixed;
-  left: 0px;
-  right: 2px;
-  top: 0px;
-  bottom: 2px;
+  width: calc(100% - var(--border-width)*2);
+  height: calc(100% - var(--border-width)*2);
 }
 
 canvas {
   border: 1px solid white;
+}
+
+.grab {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
 }
 
 .github-banner {

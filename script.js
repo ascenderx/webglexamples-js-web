@@ -47,6 +47,7 @@ class App {
       aPosition: gl.getAttribLocation(program, 'aPosition'),
       uMouse: gl.getUniformLocation(program, 'uMouse'),
       uTime: gl.getUniformLocation(program, 'uTime'),
+      uOffset: gl.getUniformLocation(program, 'uOffset'),
       uResolution: gl.getUniformLocation(program, 'uResolution'),
       uModelView: gl.getUniformLocation(program, 'uModelView'),
       uProjection: gl.getUniformLocation(program, 'uProjection'),
@@ -74,6 +75,13 @@ class App {
     this._mouse = {
       x: 0,
       y: 0,
+      pressed: false,
+    };
+    this._offset = {
+      startX: 0,
+      startY: 0,
+      x: 0,
+      y: 0,
     };
     this._loop = new Loop(this._draw.bind(this));
   }
@@ -85,6 +93,7 @@ class App {
     let locations = this._locations;
     let buffers = this._buffers;
     let mouse = this._mouse;
+    let offset = this._offset;
     
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
@@ -120,6 +129,7 @@ class App {
     gl.useProgram(programs.main);
     
     gl.uniform2f(locations.uMouse, mouse.x, canvas.clientHeight - mouse.y);
+    gl.uniform2f(locations.uOffset, -offset.x, offset.y);
     gl.uniform1f(locations.uTime, elapsed);
     gl.uniform2f(locations.uResolution, canvas.clientWidth, canvas.clientHeight);
     gl.uniformMatrix4fv(locations.uProjection, false, projectionMatrix);
@@ -139,6 +149,26 @@ class App {
   updateMouse(x, y) {
     this._mouse.x = x;
     this._mouse.y = y;
+    if (this._mouse.pressed) {
+      this._offset.x = x - this._offset.startX;
+      this._offset.y = y - this._offset.startY;
+    }
+  }
+  
+  pressMouse() {
+    if (!this._mouse.pressed) {
+      this._offset.startX = this._mouse.x - this._offset.startX;
+      this._offset.startY = this._mouse.y - this._offset.startY;
+    }
+    this._mouse.pressed = true;
+  }
+  
+  releaseMouse() {
+    if (this._mouse.pressed) {
+      this._offset.startX = this._offset.x;
+      this._offset.startY = this._offset.y;
+    }
+    this._mouse.pressed = false;
   }
   
   start() {
@@ -152,6 +182,20 @@ window.addEventListener('load', (_) => {
   app = new App(canvas);
   
   canvas.addEventListener('mousemove', (event) => {
+    app.updateMouse(event.clientX, event.clientY);
+  });
+  
+  canvas.addEventListener('mousedown', (event) => {
+    canvas.classList.remove('grab');
+    canvas.classList.add('grabbing');
+    app.pressMouse();
+    app.updateMouse(event.clientX, event.clientY);
+  });
+  
+  canvas.addEventListener('mouseup', (event) => {
+    canvas.classList.remove('grabbing');
+    canvas.classList.add('grab');
+    app.releaseMouse();
     app.updateMouse(event.clientX, event.clientY);
   });
   
