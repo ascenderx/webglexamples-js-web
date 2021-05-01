@@ -1,0 +1,30 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: black;
+}
+
+.canvas-container {
+  position: fixed;
+  left: 0px;
+  right: 2px;
+  top: 0px;
+  bottom: 2px;
+}
+
+canvas {
+  border: 1px solid white;
+}
+
+.github-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
