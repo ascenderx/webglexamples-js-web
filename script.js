@@ -46,8 +46,9 @@ class App {
     this._locations = {
       aPosition: gl.getAttribLocation(program, 'aPosition'),
       uMouse: gl.getUniformLocation(program, 'uMouse'),
-      uTime: gl.getUniformLocation(program, 'uTime'),
       uOffset: gl.getUniformLocation(program, 'uOffset'),
+      uZoom: gl.getUniformLocation(program, 'uZoom'),
+      uTime: gl.getUniformLocation(program, 'uTime'),
       uResolution: gl.getUniformLocation(program, 'uResolution'),
       uModelView: gl.getUniformLocation(program, 'uModelView'),
       uProjection: gl.getUniformLocation(program, 'uProjection'),
@@ -83,6 +84,7 @@ class App {
       x: 0,
       y: 0,
     };
+    this._zoom = 0;
     this._loop = new Loop(this._draw.bind(this));
   }
   
@@ -94,6 +96,7 @@ class App {
     let buffers = this._buffers;
     let mouse = this._mouse;
     let offset = this._offset;
+    let zoom = this._zoom;
     
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
@@ -130,6 +133,7 @@ class App {
     
     gl.uniform2f(locations.uMouse, mouse.x, canvas.clientHeight - mouse.y);
     gl.uniform2f(locations.uOffset, -offset.x, offset.y);
+    gl.uniform1f(locations.uZoom, zoom);
     gl.uniform1f(locations.uTime, elapsed);
     gl.uniform2f(locations.uResolution, canvas.clientWidth, canvas.clientHeight);
     gl.uniformMatrix4fv(locations.uProjection, false, projectionMatrix);
@@ -171,6 +175,10 @@ class App {
     this._mouse.pressed = false;
   }
   
+  zoom(amount) {
+    this._zoom += amount;
+  }
+  
   start() {
     this._loop.resume();
   }
@@ -203,7 +211,11 @@ window.addEventListener('load', (_) => {
     canvas.classList.remove('grabbing');
     canvas.classList.add('grab');
     app.releaseMouse();
-  })
+  });
+  
+  canvas.addEventListener('wheel', (event) => {
+    app.zoom(event.deltaY * -0.003);
+  });
   
   app.start();
 });

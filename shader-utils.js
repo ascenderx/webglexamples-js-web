@@ -7,6 +7,7 @@ const highp vec2 I = vec2(0.0, 1.0);
 
 uniform lowp vec2 uMouse;
 uniform lowp vec2 uOffset;
+uniform lowp float uZoom;
 uniform highp float uTime;
 uniform lowp vec2 uResolution;
 
@@ -31,9 +32,9 @@ highp vec3 getColor(highp vec2 point) {
   return hsv2rgb(vec3(h, s, v));
 }
 
-highp vec2 adjustToResolution(highp vec2 z) {
-  highp float ratio = -0.1 * min(uResolution.x, uResolution.y);
-  return vec2(z.x / ratio, z.y / ratio);
+highp vec2 scaleAndFlipToResolution(highp vec2 z) {
+  highp float ratio = 0.1 * min(uResolution.x, uResolution.y);
+  return z / ratio;
 }
 
 highp float degToRad(highp float degrees) {

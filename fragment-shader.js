@@ -3,11 +3,8 @@ const fsSource = usSource + `
 
 #ifdef FUNC1
 highp vec2 func(highp vec2 z) {
-  highp float x = uTime/40.0;
-  highp float y = uTime/20.0;
-  highp float c = 1.0 / (PI * 10.0);
-  highp float a = 100.0;
-  return a*sin((z - x*R + y*I)*c);
+  highp float angle = mod(uTime / 20.0, 360.0);
+  return cRotate(z, -angle);
 }
 #endif
 
@@ -19,7 +16,7 @@ highp vec2 func(highp vec2 z) {
   highp vec2 d = cMul(z, z) + 2.0*R + 2.0*I;
   highp vec2 o = cDiv(cMul(a, b2), d);
   highp float angle = mod(uTime / 20.0, 360.0);
-  return cRotate(o, angle);
+  return o;
 }
 #endif
 
@@ -27,14 +24,16 @@ highp vec2 func(highp vec2 z) {
 highp vec2 func(highp vec2 z) {
   highp vec2 o = cMul(cMul(z, z), z) - R;
   highp float angle = mod(uTime / 20.0, 360.0);
-  return cRotate(o, angle);
+  return o;
 }
 #endif
 
 void main(void) {
-  highp vec2 z = uResolution*0.5 - (gl_FragCoord.xy + uOffset.xy);
-  highp vec2 o = func(adjustToResolution(z));
+  highp vec2 center = uResolution*0.5;
+  highp vec2 z = gl_FragCoord.xy + uOffset - center;
+  highp float computedZoom = pow(2.0, uZoom);
+  highp vec2 z1 = scaleAndFlipToResolution(z*computedZoom);
+  highp vec2 o = func(z1);
   gl_FragColor = vec4(getColor(o), 1.0);
 }
 `;
-
