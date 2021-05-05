@@ -32,11 +32,6 @@ highp vec3 getColor(highp vec2 point) {
   return hsv2rgb(vec3(h, s, v));
 }
 
-highp vec2 scaleAndFlipToResolution(highp vec2 z) {
-  highp float ratio = 0.1 * min(uResolution.x, uResolution.y);
-  return z / ratio;
-}
-
 highp float degToRad(highp float degrees) {
   return degrees * PI / 180.0;
 }
