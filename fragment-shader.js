@@ -33,7 +33,7 @@ void main(void) {
   highp vec2 z = gl_FragCoord.xy - center;
   highp float computedZoom = pow(2.0, uZoom);
   highp float ratio = 0.1 * min(uResolution.x, uResolution.y);
-  highp vec2 z1 = z*computedZoom/ratio + uOffset/ratio;
+  highp vec2 z1 = (z*computedZoom + uOffset)/ratio;
   highp vec2 o = func(z1);
   gl_FragColor = vec4(getColor(o), 1.0);
 }
