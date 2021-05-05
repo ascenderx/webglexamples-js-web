@@ -15,7 +15,7 @@ highp vec2 func(highp vec2 z) {
   highp vec2 b2 = cMul(b, b);
   highp vec2 d = cMul(z, z) + 2.0*R + 2.0*I;
   highp vec2 o = cDiv(cMul(a, b2), d);
-  highp float angle = mod(uTime / 20.0, 360.0);
+  // highp float angle = mod(uTime / 20.0, 360.0);
   return o;
 }
 #endif
@@ -23,16 +23,16 @@ highp vec2 func(highp vec2 z) {
 #ifdef FUNC3
 highp vec2 func(highp vec2 z) {
   highp vec2 o = cMul(cMul(z, z), z) - R;
-  highp float angle = mod(uTime / 20.0, 360.0);
+  // highp float angle = mod(uTime / 20.0, 360.0);
   return o;
 }
 #endif
 
 void main(void) {
   highp vec2 center = uResolution*0.5;
-  highp vec2 z = gl_FragCoord.xy + uOffset - center;
+  highp vec2 z = gl_FragCoord.xy - center;
   highp float computedZoom = pow(2.0, uZoom);
-  highp vec2 z1 = scaleAndFlipToResolution(z*computedZoom);
+  highp vec2 z1 = scaleAndFlipToResolution(z*computedZoom + uOffset);
   highp vec2 o = func(z1);
   gl_FragColor = vec4(getColor(o), 1.0);
 }
