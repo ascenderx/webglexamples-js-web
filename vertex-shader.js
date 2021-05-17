@@ -1,4 +1,7 @@
 const vsSource = `
+#version 100
+precision mediump float;
+
 attribute vec4 aPosition;
 
 uniform mat4 uModelView;
