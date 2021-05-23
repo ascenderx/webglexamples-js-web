@@ -30,10 +30,9 @@ vec2 func(vec2 z) {
 
 void main(void) {
   vec2 center = uResolution*0.5;
-  vec2 z = gl_FragCoord.xy - center + uOffset;
-  float computedZoom = pow(2.0, uZoom);
+  vec2 z = gl_FragCoord.xy - center;
   float ratio = 0.1*min(uResolution.x, uResolution.y);
-  vec2 z1 = (z*computedZoom)/ratio;
+  vec2 z1 = (z*uZoom + uOffset)/ratio;
   vec2 o = func(z1);
   gl_FragColor = vec4(getColor(o), 1.0);
 }

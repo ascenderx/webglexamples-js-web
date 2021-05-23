@@ -76,15 +76,21 @@ class App {
     this._mouse = {
       x: 0,
       y: 0,
+      dx: 0,
+      dy: 0,
       pressed: false,
     };
     this._offset = {
-      startX: 0,
-      startY: 0,
-      x: 0,
-      y: 0,
+      dx: 0,
+      dy: 0,
     };
-    this._zoom = 0;
+    this._zoom = {
+      level: 0,
+      maxLevel: 3,
+      minLevel: -3,
+      actual: 1,
+    };
+    
     this._loop = new Loop(this._draw.bind(this));
   }
   
@@ -132,8 +138,8 @@ class App {
     gl.useProgram(programs.main);
     
     gl.uniform2f(locations.uMouse, mouse.x, canvas.clientHeight - mouse.y);
-    gl.uniform2f(locations.uOffset, -offset.x, offset.y);
-    gl.uniform1f(locations.uZoom, zoom);
+    gl.uniform2f(locations.uOffset, -offset.dx, offset.dy);
+    gl.uniform1f(locations.uZoom, zoom.actual);
     gl.uniform1f(locations.uTime, elapsed);
     gl.uniform2f(locations.uResolution, canvas.clientWidth, canvas.clientHeight);
     gl.uniformMatrix4fv(locations.uProjection, false, projectionMatrix);
@@ -145,38 +151,44 @@ class App {
   }
   
   resize() {
-    this._canvas.width = this._canvas.parentElement.clientWidth;
-    this._canvas.height = this._canvas.parentElement.clientHeight;
-    this._gl.viewport(0, 0, this._canvas.offsetWidth, this._canvas.offsetHeight);
+    let canvas = this._canvas;
+    let gl = this._gl;
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+    gl.viewport(0, 0, canvas.offsetWidth, canvas.offsetHeight);
   }
   
-  updateMouse(x, y) {
-    this._mouse.x = x;
-    this._mouse.y = y;
-    if (this._mouse.pressed) {
-      this._offset.x = x - this._offset.startX;
-      this._offset.y = y - this._offset.startY;
+  mouseMove(x, y, dx, dy) {
+    let mouse = this._mouse;
+    let offset = this._offset;
+    let zoom = this._zoom;
+    mouse.x = x;
+    mouse.y = y;
+    mouse.dx = dx;
+    mouse.dy = dy;
+    if (mouse.pressed) {
+      offset.dx += mouse.dx * zoom.actual;
+      offset.dy += mouse.dy * zoom.actual;
     }
   }
   
   pressMouse() {
-    if (!this._mouse.pressed) {
-      this._offset.startX = this._mouse.x - this._offset.startX;
-      this._offset.startY = this._mouse.y - this._offset.startY;
-    }
     this._mouse.pressed = true;
   }
   
   releaseMouse() {
-    if (this._mouse.pressed) {
-      this._offset.startX = this._offset.x;
-      this._offset.startY = this._offset.y;
-    }
     this._mouse.pressed = false;
   }
   
   zoom(amount) {
-    this._zoom += amount;
+    let zoom = this._zoom;
+    zoom.level += amount;
+    if (zoom.level < zoom.minLevel) {
+      zoom.level = zoom.minLevel;
+    } else if (zoom.level > zoom.maxLevel) {
+      zoom.level = zoom.maxLevel;
+    }
+    zoom.actual = 2**zoom.level;
   }
   
   start() {
@@ -190,21 +202,24 @@ window.addEventListener('load', (_) => {
   app = new App(canvas);
   
   canvas.addEventListener('mousemove', (event) => {
-    app.updateMouse(event.clientX, event.clientY);
+    app.mouseMove(
+      event.clientX,
+      event.clientY,
+      event.movementX,
+      event.movementY
+    );
   });
   
   canvas.addEventListener('mousedown', (event) => {
     canvas.classList.remove('grab');
     canvas.classList.add('grabbing');
     app.pressMouse();
-    app.updateMouse(event.clientX, event.clientY);
   });
   
   canvas.addEventListener('mouseup', (event) => {
     canvas.classList.remove('grabbing');
     canvas.classList.add('grab');
     app.releaseMouse();
-    app.updateMouse(event.clientX, event.clientY);
   });
   
   canvas.addEventListener('mouseout', (_) => {
